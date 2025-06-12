@@ -345,12 +345,16 @@ export default function Home() {
                     onClick={() => toggleEditMode(idx)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {slide.split('\n').map((line, lineIdx) => {
+                    {slide.split('\n').map((line, lineIdx, lines) => {
+                      // 다음 줄이 (·)로 시작하는지 확인
+                      const nextLine = lineIdx < lines.length - 1 ? lines[lineIdx + 1] : null;
+                      const nextIsIndented = nextLine && nextLine.startsWith('(·)');
+                      const marginBottom = nextIsIndented ? 0 : 8;
+
                       if (line.startsWith('(·)')) {
-                        // 들여쓰기된 대사 처리
                         const content = line.slice(4);
                         return (
-                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 8 }}>
+                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom }}>
                             <div style={{ flex: '0 0 160px', visibility: 'hidden' }}>(·)</div>
                             <div style={{ flex: 1 }}>{content}</div>
                           </div>
@@ -359,10 +363,10 @@ export default function Home() {
 
                       const roleMatch = line.match(/^\(([^)]+)\)\s*(.*)$/s);
                       const effectMatch = line.match(/^\[(♪|♬)?\s*([^\]]+)\]$/s);
-
+                      
                       if (roleMatch) {
                         return (
-                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 8 }}>
+                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom }}>
                             <div style={{ flex: '0 0 160px', fontWeight: 600 }}>({roleMatch[1]})</div>
                             <div style={{ flex: 1 }}>{roleMatch[2]}</div>
                           </div>
@@ -371,14 +375,14 @@ export default function Home() {
                         return (
                           <div key={lineIdx} style={{ 
                             color: effectMatch[1] ? '#ffb300' : '#4caf50',
-                            marginBottom: 8,
+                            marginBottom,
                             fontStyle: 'italic'
                           }}>
                             [{effectMatch[1] || ''}{effectMatch[2]}]
                           </div>
                         );
                       } else {
-                        return <div key={lineIdx} style={{ marginBottom: 8 }}>{line}</div>;
+                        return <div key={lineIdx} style={{ marginBottom }}>{line}</div>;
                       }
                     })}
                   </div>
