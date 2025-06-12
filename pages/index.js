@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import PPTXGenJS from 'pptxgenjs';
 import GuideModal from '../components/GuideModal';
 import PresentationMode from '../components/PresentationMode';
 import ShortcutHelp from '../components/ShortcutHelp';
@@ -112,81 +111,20 @@ export default function Home() {
     }
   };
 
-  // PPTX 다운로드 기능 (3.x 문법)
-  const handleDownloadPPTX = () => {
-    const pptx = new PPTXGenJS();
-    
-    // 16:9 와이드스크린 레이아웃 정의
-    pptx.defineLayout({ name: 'WIDE', width: 13.33, height: 7.5 });
-    pptx.layout = 'WIDE';
-
-    // 기본 마스터 슬라이드 설정
-    pptx.defineSlideMaster({
-      title: 'MASTER_SLIDE',
-      background: { fill: '000000' },
-      margin: [0.5, 0.5, 0.5, 0.5],
-      objects: [
-        { rect: { x: 0, y: 0, w: '100%', h: '100%', fill: '000000' } }
-      ]
-    });
-
-    slides.forEach((slideText) => {
-      const slide = pptx.addSlide({ masterName: 'MASTER_SLIDE' });
-      
-      // 슬라이드 내용을 줄 단위로 분리
-      const lines = slideText.split('\n').filter(line => line.trim() !== '');
-      
-      // 전체 텍스트를 담을 shape 생성
-      const textShape = slide.addShape('RECTANGLE', {
-        x: 0.2,
-        y: 0.2,
-        w: 12.93,
-        h: 7.1,
-        fill: '000000',
-        line: { color: '000000' }
-      });
-
-      // 각 줄을 처리하여 텍스트 배열 생성
-      const formattedText = [];
-      lines.forEach(line => {
-        const match = line.match(/^\(([^)]+)\)\s*(.*)$/s);
-        if (match) {
-          const role = match[1];
-          const content = match[2];
-          // 배역명과 대사를 별도의 텍스트 객체로 추가
-          formattedText.push({
-            text: `(${role})`,
-            options: { bold: true, fontSize: 24, breakLine: true }
-          });
-          formattedText.push({
-            text: content,
-            options: { fontSize: 24, breakLine: true, indentLevel: 1 }
-          });
-        } else {
-          formattedText.push({
-            text: line,
-            options: { fontSize: 24, breakLine: true }
-          });
-        }
-      });
-
-      // 전체 텍스트를 한 번에 추가
-      textShape.addText(formattedText, {
-        x: 0.5,
-        y: 0.3,
-        w: 11.93,
-        h: 6.5,
-        fontFace: 'Noto Sans KR',
-        fontSize: 24,
-        color: 'FFFFFF',
-        valign: 'middle',
-        align: 'left',
-        paraSpaceAfter: 6,
-        isTextBox: true
-      });
-    });
-
-    pptx.writeFile('자막_슬라이드.pptx');
+  // 대본 txt 파일 다운로드
+  const handleDownloadScript = () => {
+    const scriptContent = slides.join('\n---\n');
+    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '대본.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setSaveMsg('대본이 다운로드되었습니다!');
+    setTimeout(() => setSaveMsg(''), 2000);
   };
 
   // 편집 모드 토글 함수
@@ -210,7 +148,7 @@ export default function Home() {
     addToHistory(newSlides);
   };
 
-  // 슬라이드 삭제 함수 추가
+  // 슬라이드 삭제 함수
   const handleDeleteSlide = (idx) => {
     if (window.confirm('이 슬라이드를 삭제하시겠습니까?')) {
       const newSlides = [...slides];
@@ -222,66 +160,6 @@ export default function Home() {
       addToHistory(newSlides);
       setSaveMsg('슬라이드가 삭제되었습니다.');
       setTimeout(() => setSaveMsg(''), 2000);
-    }
-  };
-
-  // 키보드 단축키 처리
-  const handleKeyDown = (e, idx) => {
-    // Shift + Enter: 들여쓰기된 새 줄 추가
-    if (e.shiftKey && e.key === 'Enter') {
-      e.preventDefault();
-      const textarea = e.target;
-      const cursorPosition = textarea.selectionStart;
-      const currentValue = textarea.value;
-      
-      // 새 줄에 들여쓰기 마커 추가
-      const newValue = 
-        currentValue.slice(0, cursorPosition) + 
-        '\n(·) ' +  // 더 직관적인 마커로 변경
-        currentValue.slice(cursorPosition);
-
-      // 슬라이드 내용 업데이트
-      const newSlides = [...slides];
-      newSlides[idx] = newValue;
-      setSlides(newSlides);
-      addToHistory(newSlides);
-
-      // 커서 위치 조정
-      setTimeout(() => {
-        textarea.value = newValue;
-        textarea.selectionStart = textarea.selectionEnd = cursorPosition + 5;
-      }, 0);
-
-      return;
-    }
-
-    // 기존 단축키 처리
-    // Ctrl(Cmd) + Z: Undo
-    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
-      e.preventDefault();
-      undo();
-      return;
-    }
-    // Ctrl(Cmd) + Y 또는 Ctrl + Shift + Z: Redo
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
-      e.preventDefault();
-      redo();
-      return;
-    }
-    // Ctrl(Cmd) + Enter: 편집 모드 종료
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-      e.preventDefault();
-      toggleEditMode(idx);
-    }
-    // Ctrl(Cmd) + Shift + A: 다음에 새 슬라이드 추가
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'a') {
-      e.preventDefault();
-      addNewSlide(idx);
-    }
-    // Delete: 빈 슬라이드 삭제
-    if (e.key === 'Delete' && slides[idx].trim() === '') {
-      e.preventDefault();
-      handleDeleteSlide(idx);
     }
   };
 
@@ -298,7 +176,7 @@ export default function Home() {
       <header style={{ marginBottom: 32, textAlign: 'center' }}>
         <h1 style={{ fontSize: 36, fontWeight: 700, marginBottom: 8 }}>자막 해설 슬라이드 생성기</h1>
         <p style={{ color: '#555', fontSize: 18, marginBottom: 16 }}>
-          연극/공연 대본(.txt) 파일을 업로드하면 자막 슬라이드를 자동으로 생성하고, 편집 및 PPT로 저장할 수 있습니다.
+          연극/공연 대본(.txt) 파일을 업로드하면 자막 슬라이드를 자동으로 생성하고, 편집할 수 있습니다.
         </p>
         <button 
           onClick={() => setIsGuideOpen(true)}
@@ -339,8 +217,8 @@ export default function Home() {
         <button onClick={handleLoadSlides} style={{ padding: '8px 20px', fontSize: 16, background: '#43a047', color: '#fff', border: 'none', borderRadius: 6, fontWeight: 500, cursor: 'pointer' }}>
           불러오기
         </button>
-        <button onClick={handleDownloadPPTX} style={{ padding: '8px 20px', fontSize: 16, background: '#ffb300', color: '#222', border: 'none', borderRadius: 6, fontWeight: 500, cursor: 'pointer' }}>
-          PPT로 저장
+        <button onClick={handleDownloadScript} style={{ padding: '8px 20px', fontSize: 16, background: '#ffb300', color: '#222', border: 'none', borderRadius: 6, fontWeight: 500, cursor: 'pointer' }}>
+          대본 다운로드
         </button>
         {slides.length > 0 && (
           <button 
@@ -410,104 +288,107 @@ export default function Home() {
                       border: 'none',
                       borderRadius: 4,
                       cursor: 'pointer',
-                      transition: 'background 0.2s',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4
+                      transition: 'background 0.2s'
                     }}
-                    title="이 슬라이드 삭제"
                   >
-                    <span style={{ fontSize: 18, marginBottom: 2 }}>×</span>
                     삭제
                   </button>
                 </div>
               </div>
               <div
-                onClick={() => !editModes[idx] && toggleEditMode(idx)}
-                onMouseEnter={() => setHoveredSlide(idx)}
-                onMouseLeave={() => setHoveredSlide(null)}
                 style={{
-                  background: editModes[idx] ? '#1a1a1a' : '#000',
+                  background: '#000',
                   color: '#fff',
-                  borderRadius: 12,
-                  padding: 32,
-                  minHeight: 180,
-                  fontFamily: 'Noto Sans KR, sans-serif',
-                  fontSize: 24,
-                  boxShadow: hoveredSlide === idx ? '0 4px 12px rgba(33,150,243,0.15)' : '0 2px 8px rgba(0,0,0,0.08)',
-                  marginBottom: 8,
-                  transition: 'all 0.2s',
-                  cursor: editModes[idx] ? 'default' : 'text',
-                  border: editModes[idx] ? '2px solid #2196f3' : hoveredSlide === idx ? '2px solid rgba(33,150,243,0.3)' : '2px solid transparent',
+                  padding: 24,
+                  borderRadius: 8,
+                  whiteSpace: 'pre-wrap',
+                  fontSize: 18,
+                  lineHeight: 1.6,
                   position: 'relative'
                 }}
               >
                 {editModes[idx] ? (
                   <textarea
                     value={slide}
-                    onChange={e => {
-                      handleSlideChange(idx, e.target.value);
-                    }}
-                    onBlur={() => toggleEditMode(idx)}
-                    onKeyDown={(e) => handleKeyDown(e, idx)}
-                    autoFocus
+                    onChange={(e) => handleSlideChange(idx, e.target.value)}
                     style={{
                       width: '100%',
-                      minHeight: 140,
-                      background: 'transparent',
+                      minHeight: 200,
+                      background: '#000',
                       color: '#fff',
-                      border: 'none',
-                      resize: 'vertical',
-                      fontFamily: 'Noto Sans KR, sans-serif',
-                      fontSize: 24,
-                      outline: 'none',
-                      whiteSpace: 'pre-wrap',
-                      lineHeight: '1.5'
+                      border: '1px solid #333',
+                      padding: 16,
+                      borderRadius: 4,
+                      fontSize: 18,
+                      lineHeight: 1.6,
+                      fontFamily: 'inherit'
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && e.shiftKey) {
+                        e.preventDefault();
+                        const cursorPosition = e.target.selectionStart;
+                        const textBeforeCursor = e.target.value.substring(0, cursorPosition);
+                        const textAfterCursor = e.target.value.substring(cursorPosition);
+                        handleSlideChange(idx, textBeforeCursor + '\n(·) ' + textAfterCursor);
+                        // 다음 렌더링 후 커서 위치 조정
+                        setTimeout(() => {
+                          e.target.selectionStart = cursorPosition + 4;
+                          e.target.selectionEnd = cursorPosition + 4;
+                        }, 0);
+                      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        toggleEditMode(idx);
+                      }
                     }}
                   />
                 ) : (
-                  <div style={{ whiteSpace: 'pre-wrap' }}>
+                  <div
+                    onClick={() => toggleEditMode(idx)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     {slide.split('\n').map((line, lineIdx) => {
                       if (line.startsWith('(·)')) {
+                        // 들여쓰기된 대사 처리
                         const content = line.slice(4);
                         return (
-                          <div key={lineIdx} style={{ 
-                            display: 'flex', 
-                            alignItems: 'flex-start', 
-                            marginBottom: 2
-                          }}>
-                            <span style={{ minWidth: 80, visibility: 'hidden' }}>(·)</span>
-                            <span style={{ marginLeft: 24, whiteSpace: 'pre-line' }}>{content}</span>
+                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 8 }}>
+                            <div style={{ flex: '0 0 160px', visibility: 'hidden' }}>(·)</div>
+                            <div style={{ flex: 1 }}>{content}</div>
                           </div>
                         );
                       }
 
-                      const match = line.match(/^\(([^)]+)\)\s*(.*)$/s);
-                      const role = match ? match[1] : '';
-                      const content = match ? match[2] : line;
-                      return (
-                        <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 2 }}>
-                          {role && (
-                            <span style={{ minWidth: 80, fontWeight: 700 }}>{`(${role})`}</span>
-                          )}
-                          <span style={{ marginLeft: role ? 24 : 0, whiteSpace: 'pre-line' }}>{content}</span>
-                        </div>
-                      );
+                      const roleMatch = line.match(/^\(([^)]+)\)\s*(.*)$/s);
+                      const effectMatch = line.match(/^\[(♪|♬)?\s*([^\]]+)\]$/s);
+
+                      if (roleMatch) {
+                        return (
+                          <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 8 }}>
+                            <div style={{ flex: '0 0 160px', fontWeight: 600 }}>({roleMatch[1]})</div>
+                            <div style={{ flex: 1 }}>{roleMatch[2]}</div>
+                          </div>
+                        );
+                      } else if (effectMatch) {
+                        return (
+                          <div key={lineIdx} style={{ 
+                            color: effectMatch[1] ? '#ffb300' : '#4caf50',
+                            marginBottom: 8,
+                            fontStyle: 'italic'
+                          }}>
+                            [{effectMatch[1] || ''}{effectMatch[2]}]
+                          </div>
+                        );
+                      } else {
+                        return <div key={lineIdx} style={{ marginBottom: 8 }}>{line}</div>;
+                      }
                     })}
                   </div>
                 )}
               </div>
-              {idx < slides.length - 1 && (
-                <hr style={{ border: 'none', borderTop: '1.5px dashed #bbb', margin: '32px 0 0 0' }} />
-              )}
             </div>
           ))}
         </div>
       </section>
       <ShortcutHelp />
-      <footer style={{ marginTop: 48, textAlign: 'center', color: '#aaa', fontSize: 15 }}>
-        &copy; {new Date().getFullYear()} 자막 해설 슬라이드 생성기
-      </footer>
     </div>
   );
 }
