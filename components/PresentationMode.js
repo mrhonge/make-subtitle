@@ -198,7 +198,8 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
 
   return (
     <div className="presentation-mode" ref={presentationRef}>
-      {isBlackout && (
+      {/* 청중용 화면에만 블랙아웃 오버레이 표시 */}
+      {isBlackout && window.opener && (
         <div 
           className="blackout-overlay"
           onClick={() => setIsBlackout(false)}
@@ -270,19 +271,23 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
           다음
         </button>
         <div className="right-controls">
-          <button 
+          <button
             className="control-btn"
             onClick={() => isDualScreen ? stopDualScreen() : startDualScreen()}
             title="듀얼 스크린 (D)"
           >
             {isDualScreen ? '화면 분리 종료' : '화면 분리하기'}
           </button>
-          <button 
+          <button
             className="control-btn"
-            onClick={() => setIsBlackout(prev => !prev)}
+            onClick={() => setIsBlackout(!isBlackout)}
+            style={{
+              background: isBlackout ? '#f44336' : 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}
             title="화면 가리기 (B)"
           >
-            {isBlackout ? '화면 보이기' : '화면 가리기'}
+            {isBlackout ? '화면 보여주기' : '화면 가리기'}
           </button>
           <button 
             className="control-btn"
@@ -291,7 +296,11 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
           >
             {isFullscreenMode ? '전체 화면 종료' : '전체 화면으로 보기'}
           </button>
-          <button className="control-btn" onClick={onClose} title="ESC">
+          <button 
+            className="control-btn" 
+            onClick={onClose}
+            title="ESC"
+          >
             닫기
           </button>
         </div>

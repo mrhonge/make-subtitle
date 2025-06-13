@@ -2,6 +2,8 @@ import { useState } from 'react';
 import GuideModal from '../components/GuideModal';
 import PresentationMode from '../components/PresentationMode';
 import ShortcutHelp from '../components/ShortcutHelp';
+import TutorialModal from '../components/TutorialModal';
+import CaptionTipModal from '../components/CaptionTipModal';
 
 export default function Home() {
   const [script, setScript] = useState('');
@@ -10,6 +12,8 @@ export default function Home() {
   const [editModes, setEditModes] = useState([]); // 각 슬라이드의 편집 모드 상태 관리
   const [hoveredSlide, setHoveredSlide] = useState(null);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isCaptionTipOpen, setIsCaptionTipOpen] = useState(false);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
   
@@ -163,6 +167,21 @@ export default function Home() {
     }
   };
 
+  // 슬라이드 복제 함수
+  const handleDuplicateSlide = (idx) => {
+    const newSlides = [...slides];
+    const newEditModes = [...editModes];
+    // 현재 슬라이드를 다음 위치에 복제
+    newSlides.splice(idx + 1, 0, slides[idx]);
+    // 복제된 슬라이드는 편집 모드 꺼진 상태로 시작
+    newEditModes.splice(idx + 1, 0, false);
+    setSlides(newSlides);
+    setEditModes(newEditModes);
+    addToHistory(newSlides);
+    setSaveMsg('슬라이드가 복제되었습니다.');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
+
   // 슬라이드 내용 변경 시 히스토리 추가
   const handleSlideChange = (idx, newContent) => {
     const newSlides = [...slides];
@@ -178,31 +197,106 @@ export default function Home() {
         <p style={{ color: '#555', fontSize: 18, marginBottom: 16 }}>
           연극/공연 대본(.txt) 파일을 업로드하면 자막 슬라이드를 자동으로 생성하고, 편집할 수 있습니다.
         </p>
-        <button 
-          onClick={() => setIsGuideOpen(true)}
-          style={{
-            background: '#e3f2fd',
-            color: '#1976d2',
-            border: 'none',
-            padding: '8px 20px',
-            borderRadius: 6,
-            fontSize: 16,
-            fontWeight: 500,
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: 24,
-            transition: 'background-color 0.2s'
-          }}
-          onMouseOver={e => e.target.style.background = '#bbdefb'}
-          onMouseOut={e => e.target.style.background = '#e3f2fd'}
-        >
-          📝 대본 작성 가이드 보기
-        </button>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: 24 }}>
+          <button 
+            onClick={() => setIsTutorialOpen(true)}
+            style={{
+              background: '#e3f2fd',
+              color: '#1976d2',
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: 8,
+              fontSize: 16,
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s',
+              boxShadow: '0 2px 4px rgba(25, 118, 210, 0.1)'
+            }}
+            onMouseOver={e => {
+              e.target.style.background = '#bbdefb';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 8px rgba(25, 118, 210, 0.2)';
+            }}
+            onMouseOut={e => {
+              e.target.style.background = '#e3f2fd';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 4px rgba(25, 118, 210, 0.1)';
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>❓</span>
+            사용법 보기
+          </button>
+          <button 
+            onClick={() => setIsGuideOpen(true)}
+            style={{
+              background: '#e3f2fd',
+              color: '#1976d2',
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: 8,
+              fontSize: 16,
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s',
+              boxShadow: '0 2px 4px rgba(25, 118, 210, 0.1)'
+            }}
+            onMouseOver={e => {
+              e.target.style.background = '#bbdefb';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 8px rgba(25, 118, 210, 0.2)';
+            }}
+            onMouseOut={e => {
+              e.target.style.background = '#e3f2fd';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 4px rgba(25, 118, 210, 0.1)';
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>📝</span>
+            대본 작성 가이드 보기
+          </button>
+          <button 
+            onClick={() => setIsCaptionTipOpen(true)}
+            style={{
+              background: '#e3f2fd',
+              color: '#1976d2',
+              border: 'none',
+              padding: '10px 24px',
+              borderRadius: 8,
+              fontSize: 16,
+              fontWeight: 500,
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              transition: 'all 0.2s',
+              boxShadow: '0 2px 4px rgba(25, 118, 210, 0.1)'
+            }}
+            onMouseOver={e => {
+              e.target.style.background = '#bbdefb';
+              e.target.style.transform = 'translateY(-1px)';
+              e.target.style.boxShadow = '0 4px 8px rgba(25, 118, 210, 0.2)';
+            }}
+            onMouseOut={e => {
+              e.target.style.background = '#e3f2fd';
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 2px 4px rgba(25, 118, 210, 0.1)';
+            }}
+          >
+            <span style={{ fontSize: '20px' }}>✨</span>
+            자막 제작 Tip!
+          </button>
+        </div>
       </header>
 
       <GuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
+      <TutorialModal isOpen={isTutorialOpen} onClose={() => setIsTutorialOpen(false)} />
+      <CaptionTipModal isOpen={isCaptionTipOpen} onClose={() => setIsCaptionTipOpen(false)} />
       <PresentationMode 
         slides={slides} 
         isOpen={showPresentation} 
@@ -243,11 +337,43 @@ export default function Home() {
         {saveMsg && <span style={{ color: '#1976d2', fontWeight: 500, marginLeft: 12 }}>{saveMsg}</span>}
       </div>
       <section style={{ marginTop: 24 }}>
-        <h2 style={{ fontSize: 24, fontWeight: 600, marginBottom: 16 }}>슬라이드 미리보기</h2>
+        <h2 style={{ 
+          fontSize: 24, 
+          fontWeight: 600, 
+          marginBottom: 16,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12
+        }}>
+          슬라이드 미리보기
+          <span style={{ 
+            fontSize: 16, 
+            color: '#666', 
+            fontWeight: 400 
+          }}>
+            슬라이드 클릭 시 편집 모드로 전환됩니다
+          </span>
+        </h2>
         {slides.length === 0 && <p style={{ color: '#888', textAlign: 'center' }}>대본 파일을 업로드하면 슬라이드가 생성됩니다.</p>}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          gap: 32,
+          position: 'relative'
+        }}>
           {slides.map((slide, idx) => (
             <div key={idx}>
+              {idx > 0 && (
+                <div style={{
+                  position: 'absolute',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '100%',
+                  height: '1px',
+                  background: '#e0e0e0',
+                  marginTop: -16
+                }} />
+              )}
               <div style={{ 
                 color: '#1976d2', 
                 fontWeight: 600, 
@@ -259,40 +385,67 @@ export default function Home() {
               }}>
                 <span>슬라이드 {idx + 1}</span>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button
-                    onClick={() => addNewSlide(idx)}
-                    style={{
-                      padding: '4px 12px',
-                      fontSize: 14,
-                      background: '#4caf50',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 4,
-                      cursor: 'pointer',
-                      transition: 'background 0.2s',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4
-                    }}
-                  >
-                    <span style={{ fontSize: 18, marginBottom: 2 }}>+</span>
-                    새 슬라이드
-                  </button>
-                  <button
-                    onClick={() => handleDeleteSlide(idx)}
-                    style={{
-                      padding: '4px 12px',
-                      fontSize: 14,
-                      background: '#f44336',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 4,
-                      cursor: 'pointer',
-                      transition: 'background 0.2s'
-                    }}
-                  >
-                    삭제
-                  </button>
+                  {editModes[idx] && (
+                    <>
+                      <button
+                        onClick={() => addNewSlide(idx)}
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: 14,
+                          background: '#4caf50',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          transition: 'background 0.2s',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4
+                        }}
+                      >
+                        <span style={{ fontSize: 18, marginBottom: 2 }}>+</span>
+                        새 슬라이드
+                      </button>
+                      <button
+                        onClick={() => handleDeleteSlide(idx)}
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: 14,
+                          background: '#f44336',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        삭제
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDuplicateSlide(idx);
+                          // 버튼 클릭 후 textarea로 focus 되돌리기
+                          const textarea = e.target.closest('div').querySelector('textarea');
+                          if (textarea) {
+                            textarea.focus();
+                          }
+                        }}
+                        style={{
+                          padding: '4px 12px',
+                          fontSize: 14,
+                          background: '#9c27b0',
+                          color: '#fff',
+                          border: 'none',
+                          borderRadius: 4,
+                          cursor: 'pointer',
+                          transition: 'background 0.2s'
+                        }}
+                      >
+                        복제
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
               <div
@@ -302,51 +455,60 @@ export default function Home() {
                   padding: 24,
                   borderRadius: 8,
                   whiteSpace: 'pre-wrap',
-                  fontSize: 18,
+                  fontSize: 24,
                   lineHeight: 1.6,
-                  position: 'relative'
+                  position: 'relative',
+                  fontFamily: 'Noto Sans KR, sans-serif'
                 }}
               >
                 {editModes[idx] ? (
-                  <textarea
-                    value={slide}
-                    onChange={(e) => handleSlideChange(idx, e.target.value)}
-                    style={{
-                      width: '100%',
-                      minHeight: 200,
-                      background: '#000',
-                      color: '#fff',
-                      border: '1px solid #333',
-                      padding: 16,
-                      borderRadius: 4,
-                      fontSize: 18,
-                      lineHeight: 1.6,
-                      fontFamily: 'inherit'
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && e.shiftKey) {
-                        e.preventDefault();
-                        const cursorPosition = e.target.selectionStart;
-                        const textBeforeCursor = e.target.value.substring(0, cursorPosition);
-                        const textAfterCursor = e.target.value.substring(cursorPosition);
-                        handleSlideChange(idx, textBeforeCursor + '\n(·) ' + textAfterCursor);
-                        // 다음 렌더링 후 커서 위치 조정
-                        setTimeout(() => {
-                          e.target.selectionStart = cursorPosition + 4;
-                          e.target.selectionEnd = cursorPosition + 4;
-                        }, 0);
-                      } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                  <div style={{ position: 'relative' }}>
+                    <textarea
+                      value={slide}
+                      onChange={(e) => handleSlideChange(idx, e.target.value)}
+                      style={{
+                        width: '100%',
+                        minHeight: 200,
+                        background: '#000',
+                        color: '#fff',
+                        border: '1px solid #333',
+                        padding: 16,
+                        borderRadius: 4,
+                        fontSize: 24,
+                        lineHeight: 1.6,
+                        fontFamily: 'inherit'
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.shiftKey) {
+                          e.preventDefault();
+                          const cursorPosition = e.target.selectionStart;
+                          const textBeforeCursor = e.target.value.substring(0, cursorPosition);
+                          const textAfterCursor = e.target.value.substring(cursorPosition);
+                          handleSlideChange(idx, textBeforeCursor + '\n(·) ' + textAfterCursor);
+                          setTimeout(() => {
+                            e.target.selectionStart = cursorPosition + 4;
+                            e.target.selectionEnd = cursorPosition + 4;
+                          }, 0);
+                        } else if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                          toggleEditMode(idx);
+                        }
+                      }}
+                      onBlur={(e) => {
+                        if (e.relatedTarget && e.relatedTarget.tagName === 'BUTTON') {
+                          e.preventDefault();
+                          return;
+                        }
                         toggleEditMode(idx);
-                      }
-                    }}
-                  />
+                      }}
+                      autoFocus
+                    />
+                  </div>
                 ) : (
                   <div
                     onClick={() => toggleEditMode(idx)}
                     style={{ cursor: 'pointer' }}
                   >
                     {slide.split('\n').map((line, lineIdx, lines) => {
-                      // 다음 줄이 (·)로 시작하는지 확인
                       const nextLine = lineIdx < lines.length - 1 ? lines[lineIdx + 1] : null;
                       const nextIsIndented = nextLine && nextLine.startsWith('(·)');
                       const marginBottom = nextIsIndented ? 0 : 8;
@@ -355,8 +517,16 @@ export default function Home() {
                         const content = line.slice(4);
                         return (
                           <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom }}>
-                            <div style={{ flex: '0 0 160px', visibility: 'hidden' }}>(·)</div>
-                            <div style={{ flex: 1 }}>{content}</div>
+                            <div style={{ 
+                              flex: '0 0 120px', 
+                              visibility: 'hidden',
+                              fontWeight: 700,
+                              marginRight: 32
+                            }}>(·)</div>
+                            <div style={{ 
+                              flex: 1,
+                              whiteSpace: 'pre-line'
+                            }}>{content}</div>
                           </div>
                         );
                       }
@@ -367,8 +537,15 @@ export default function Home() {
                       if (roleMatch) {
                         return (
                           <div key={lineIdx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom }}>
-                            <div style={{ flex: '0 0 160px', fontWeight: 600 }}>({roleMatch[1]})</div>
-                            <div style={{ flex: 1 }}>{roleMatch[2]}</div>
+                            <div style={{ 
+                              flex: '0 0 120px',
+                              fontWeight: 700,
+                              marginRight: 32
+                            }}>({roleMatch[1]})</div>
+                            <div style={{ 
+                              flex: 1,
+                              whiteSpace: 'pre-line'
+                            }}>{roleMatch[2]}</div>
                           </div>
                         );
                       } else if (effectMatch) {
@@ -376,13 +553,20 @@ export default function Home() {
                           <div key={lineIdx} style={{ 
                             color: effectMatch[1] ? '#ffb300' : '#4caf50',
                             marginBottom,
-                            fontStyle: 'italic'
+                            fontStyle: 'italic',
+                            padding: '8px 0'
                           }}>
                             [{effectMatch[1] || ''}{effectMatch[2]}]
                           </div>
                         );
                       } else {
-                        return <div key={lineIdx} style={{ marginBottom }}>{line}</div>;
+                        return (
+                          <div key={lineIdx} style={{ 
+                            marginBottom,
+                            whiteSpace: 'pre-line',
+                            padding: '8px 0'
+                          }}>{line}</div>
+                        );
                       }
                     })}
                   </div>
