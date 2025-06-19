@@ -24,8 +24,8 @@
   border: none;
   max-height: 90vh;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #e3f2fd #fff;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
   box-shadow: none;
   border-radius: 20px;
 }
@@ -37,15 +37,14 @@
   }
 }
 .modalContent::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
+  background: transparent;
 }
 .modalContent::-webkit-scrollbar-thumb {
-  background: #e3f2fd;
-  border-radius: 8px;
+  background: transparent;
 }
 .modalContent::-webkit-scrollbar-track {
-  background: #fff;
-  border-radius: 8px;
+  background: transparent;
 }
 .modalTitle {
   font-size: 2rem;
@@ -61,7 +60,7 @@
   margin-bottom: 18px;
   padding: 0 0 18px 0;
   border-bottom: 1px solid #e3f2fd;
-  background: none;
+  background: transparent;
   border-radius: 0;
   box-shadow: none;
   display: flex;
@@ -95,7 +94,7 @@
   border-radius: 12px;
   color: #1976d2;
   font-size: 1rem;
-  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+  box-shadow: none;
 }
 .modalNoticeTitle {
   font-weight: 700;
