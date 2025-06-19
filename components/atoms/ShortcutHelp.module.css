@@ -1,0 +1,69 @@
+.shortcutButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: transform 0.2s;
+  z-index: 1000;
+}
+.shortcutButton:hover {
+  transform: scale(1.1);
+}
+.shortcutModalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1001;
+}
+.shortcutModalContent {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  width: 300px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 20px;
+  z-index: 1002;
+}
+.shortcutTitle {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1976d2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.shortcutList {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.shortcutListItem {
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+.shortcutKey {
+  font-weight: 600;
+  color: #1976d2;
+}
+.shortcutDesc {
+  color: #333;
+} 

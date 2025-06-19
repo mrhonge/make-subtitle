@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import styles from './PresentationMode.module.css';
 
 const PresentationMode = ({ slides, isOpen, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -197,17 +198,17 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="presentation-mode" ref={presentationRef}>
+    <div className={styles.presentationMode} ref={presentationRef}>
       {/* 청중용 화면에만 블랙아웃 오버레이 표시 */}
       {isBlackout && window.opener && (
         <div 
-          className="blackout-overlay"
+          className={styles.blackoutOverlay}
           onClick={() => setIsBlackout(false)}
         />
       )}
-      <div className="presenter-view">
-        <div className="current-slide">
-          <div className="slide-content">
+      <div className={styles.presenterView}>
+        <div className={styles.currentSlide}>
+          <div className={styles.slideContent}>
             {slides[currentSlide].split('\n').map((line, lineIdx) => {
               const roleMatch = line.match(/^\(([^)]+)\)\s*(.*)$/s);
               const effectMatch = line.match(/^\[(♪|♬)?\s*([^\]]+)\]$/s);
@@ -215,71 +216,71 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
               if (roleMatch) {
                 const [_, role, content] = roleMatch;
                 return (
-                  <div key={lineIdx} className="line">
-                    <span className="role">{`(${role})`}</span>
-                    <span className="content" dangerouslySetInnerHTML={{ __html: content }} />
+                  <div key={lineIdx} className={styles.line}>
+                    <span className={styles.role}>{`(${role})`}</span>
+                    <span className={styles.content} dangerouslySetInnerHTML={{ __html: content }} />
                   </div>
                 );
               } else if (effectMatch) {
                 return (
-                  <div key={lineIdx} className="line">
-                    <span className="role" dangerouslySetInnerHTML={{ 
+                  <div key={lineIdx} className={styles.line}>
+                    <span className={styles.role} dangerouslySetInnerHTML={{ 
                       __html: `[${effectMatch[1] || ''}${effectMatch[2]}]` 
                     }} />
                   </div>
                 );
               }
               return (
-                <div key={lineIdx} className="line" dangerouslySetInnerHTML={{ __html: line }} />
+                <div key={lineIdx} className={styles.line} dangerouslySetInnerHTML={{ __html: line }} />
               );
             })}
           </div>
         </div>
 
         {currentSlide < slides.length - 1 && (
-          <div className="next-slide-preview">
+          <div className={styles.nextSlidePreview}>
             <h3>다음 슬라이드</h3>
-            <div className="preview-content">
+            <div className={styles.previewContent}>
               {slides[currentSlide + 1].split('\n').slice(0, 3).map((line, idx) => (
-                <div key={idx} className="preview-line">{line}</div>
+                <div key={idx} className={styles.previewLine}>{line}</div>
               ))}
               {slides[currentSlide + 1].split('\n').length > 3 && (
-                <div className="preview-more">...</div>
+                <div className={styles.previewMore}>...</div>
               )}
             </div>
           </div>
         )}
       </div>
 
-      <div className="controls">
+      <div className={styles.controls}>
         <button 
-          className="nav-btn prev-btn"
+          className={styles.navBtn + ' ' + (currentSlide === 0 ? styles.disabled : '')}
           onClick={() => setCurrentSlide(prev => Math.max(prev - 1, 0))}
           disabled={currentSlide === 0}
         >
           이전
         </button>
-        <span className="slide-info">
-          <span className="slide-number">{currentSlide + 1} / {slides.length}</span>
-          <span className="timer">{formatTime(elapsedTime)}</span>
+        <span className={styles.slideInfo}>
+          <span className={styles.slideNumber}>{currentSlide + 1} / {slides.length}</span>
+          <span className={styles.timer}>{formatTime(elapsedTime)}</span>
         </span>
         <button 
-          className="nav-btn next-btn"
+          className={styles.navBtn + ' ' + (currentSlide === slides.length - 1 ? styles.disabled : '')}
           onClick={() => setCurrentSlide(prev => Math.min(prev + 1, slides.length - 1))}
           disabled={currentSlide === slides.length - 1}
         >
           다음
         </button>
-        <div className="right-controls">
+        <div className={styles.rightControls}>
           <button
-            className="control-btn"
+            className={styles.controlBtn}
             onClick={() => isDualScreen ? stopDualScreen() : startDualScreen()}
             title="듀얼 스크린 (D)"
           >
             {isDualScreen ? '화면 분리 종료' : '화면 분리하기'}
           </button>
           <button
-            className="control-btn"
+            className={styles.controlBtn}
             onClick={() => setIsBlackout(!isBlackout)}
             style={{
               background: isBlackout ? '#f44336' : 'rgba(255, 255, 255, 0.1)',
@@ -290,14 +291,14 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
             {isBlackout ? '화면 보여주기' : '화면 가리기'}
           </button>
           <button 
-            className="control-btn"
+            className={styles.controlBtn}
             onClick={isFullscreenMode ? exitFullscreen : enterFullscreen}
             title="전체 화면 (F)"
           >
             {isFullscreenMode ? '전체 화면 종료' : '전체 화면으로 보기'}
           </button>
           <button 
-            className="control-btn" 
+            className={styles.controlBtn} 
             onClick={onClose}
             title="ESC"
           >
@@ -305,159 +306,6 @@ const PresentationMode = ({ slides, isOpen, onClose }) => {
           </button>
         </div>
       </div>
-
-      <style jsx>{`
-        .presentation-mode {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: #000;
-          color: #fff;
-          z-index: 9999;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .presenter-view {
-          flex: 1;
-          display: flex;
-          padding: 20px;
-          gap: 20px;
-        }
-
-        .current-slide {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .next-slide-preview {
-          width: 300px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          padding: 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .next-slide-preview h3 {
-          margin: 0;
-          font-size: 16px;
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .preview-content {
-          font-size: 14px;
-          opacity: 0.7;
-        }
-
-        .preview-line {
-          margin-bottom: 8px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .preview-more {
-          font-style: italic;
-          color: rgba(255, 255, 255, 0.5);
-        }
-
-        .slide-content {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          font-size: 32px;
-          line-height: 1.6;
-          font-family: 'Noto Sans KR', sans-serif;
-        }
-
-        .line {
-          margin-bottom: 16px;
-          display: flex;
-          align-items: flex-start;
-          padding: 8px;
-          border-radius: 4px;
-        }
-
-        .role {
-          font-weight: 700;
-          min-width: 120px;
-          margin-right: 32px;
-        }
-
-        .content {
-          flex: 1;
-        }
-
-        .controls {
-          display: flex;
-          align-items: center;
-          padding: 20px;
-          background: rgba(0, 0, 0, 0.8);
-          gap: 16px;
-        }
-
-        .right-controls {
-          margin-left: auto;
-          display: flex;
-          gap: 8px;
-        }
-
-        .nav-btn,
-        .control-btn {
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          transition: all 0.2s;
-        }
-
-        .nav-btn:hover:not(:disabled),
-        .control-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-btn:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .slide-info {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .slide-number {
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .timer {
-          margin-left: 16px;
-          font-family: monospace;
-          color: rgba(255, 255, 255, 0.7);
-        }
-
-        .blackout-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: black;
-          z-index: 10000;
-          cursor: pointer;
-        }
-      `}</style>
     </div>
   );
 };

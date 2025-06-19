@@ -1,0 +1,57 @@
+.slidePreview {
+  background: #000;
+  color: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-size: 24px;
+  line-height: 1.6;
+  position: relative;
+  font-family: 'Noto Sans KR', sans-serif;
+  cursor: pointer;
+  margin-bottom: 8px;
+  max-width: 1000px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  display: block;
+  border: none;
+  transition: border 0.2s, color 0.2s, background 0.2s;
+}
+.slidePreviewActive {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: 2px solid #1976d2;
+}
+.slideTitle {
+  color: #1976d2;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.lineRow {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.lineRole {
+  flex: 0 0 120px;
+  font-weight: 700;
+  margin-right: 32px;
+}
+.lineRoleHidden {
+  visibility: hidden;
+}
+.lineContent {
+  flex: 1;
+  white-space: pre-line;
+}
+.lineEffect {
+  font-style: italic;
+  padding: 8px 0;
+  color: #4caf50;
+}
+.lineEffectMusic {
+  color: #ffb300;
+} 

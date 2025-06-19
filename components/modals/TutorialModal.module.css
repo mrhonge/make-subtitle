@@ -1,0 +1,67 @@
+.closeButton {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 8px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+.closeButton:hover {
+  background-color: #f5f5f5;
+}
+.tutorialModalContent {
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.tutorialTitle {
+  font-size: 32px;
+  margin-bottom: 32px;
+  color: #1976d2;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tutorialSection {
+  margin-bottom: 32px;
+}
+.tutorialSectionTitle {
+  font-size: 22px;
+  color: #1976d2;
+  margin-bottom: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tutorialList {
+  padding-left: 28px;
+}
+.tutorialNotice {
+  margin-top: 40px;
+  padding: 24px;
+  background: #e3f2fd;
+  border-radius: 12px;
+  color: #1976d2;
+}
+.tutorialNoticeTitle {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tutorialNoticeList {
+  color: #2196f3;
+  padding-left: 24px;
+} 

@@ -1,66 +1,41 @@
 import React from 'react';
+import Modal from './Modal';
 
 export default function GuideModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
-
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000,
-        fontFamily: 'Noto Sans KR, sans-serif'
-      }}
-      onClick={onClose}
-    >
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <button
+        onClick={onClose}
+        style={{
+          position: 'absolute',
+          right: '20px',
+          top: '20px',
+          background: 'none',
+          border: 'none',
+          fontSize: '24px',
+          cursor: 'pointer',
+          padding: '8px',
+          color: '#666',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          transition: 'background-color 0.2s',
+          fontFamily: 'Noto Sans KR, sans-serif',
+          fontWeight: 400
+        }}
+        onMouseOver={e => e.target.style.backgroundColor = '#f5f5f5'}
+        onMouseOut={e => e.target.style.backgroundColor = 'transparent'}
+      >
+        ✕
+      </button>
       <div
         style={{
-          background: 'white',
-          padding: '40px',
-          borderRadius: '16px',
-          maxWidth: '800px',
-          width: '90%',
-          maxHeight: '85vh',
-          overflow: 'auto',
-          position: 'relative',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          fontFamily: 'Noto Sans KR, sans-serif'
         }}
-        onClick={e => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            right: '20px',
-            top: '20px',
-            background: 'none',
-            border: 'none',
-            fontSize: '24px',
-            cursor: 'pointer',
-            padding: '8px',
-            color: '#666',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            transition: 'background-color 0.2s',
-            fontFamily: 'Noto Sans KR, sans-serif',
-            fontWeight: 400
-          }}
-          onMouseOver={e => e.target.style.backgroundColor = '#f5f5f5'}
-          onMouseOut={e => e.target.style.backgroundColor = 'transparent'}
-        >
-          ✕
-        </button>
         <h2 style={{
           fontSize: '32px',
           marginBottom: '32px',
@@ -199,6 +174,6 @@ export default function GuideModal({ isOpen, onClose }) {
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 } 

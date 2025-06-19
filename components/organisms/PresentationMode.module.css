@@ -1,0 +1,130 @@
+.presentationMode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #000;
+  color: #fff;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+.presenterView {
+  flex: 1;
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+}
+.currentSlide {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.nextSlidePreview {
+  width: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.nextSlideTitle {
+  margin: 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.previewContent {
+  font-size: 14px;
+  opacity: 0.7;
+}
+.previewLine {
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.previewMore {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.5);
+}
+.slideContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 32px;
+  line-height: 1.6;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+.line {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  padding: 8px;
+  border-radius: 4px;
+}
+.role {
+  font-weight: 700;
+  min-width: 120px;
+  margin-right: 32px;
+}
+.content {
+  flex: 1;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  gap: 16px;
+}
+.rightControls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+.navBtn,
+.controlBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+.navBtn:hover:not(:disabled),
+.controlBtn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.navBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.slideInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.slideNumber {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.timer {
+  margin-left: 16px;
+  font-family: monospace;
+  color: rgba(255, 255, 255, 0.7);
+}
+.blackoutOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: black;
+  z-index: 10000;
+  cursor: pointer;
+} 
