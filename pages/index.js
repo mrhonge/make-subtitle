@@ -1224,11 +1224,14 @@ export default function Home() {
               
               {/* 상단 이동 버튼 */}
               <button
-                onClick={scrollToTop}
+                onClick={e => {
+                  e.stopPropagation();
+                  scrollToTop();
+                }}
                 style={{
-                  position: 'absolute',
+                  position: 'fixed',
                   bottom: '30px',
-                  right: '30px',
+                  right: '260px',
                   width: '50px',
                   height: '50px',
                   background: '#1976d2',
